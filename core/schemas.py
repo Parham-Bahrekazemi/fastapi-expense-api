@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class ExpenseCreateSchema(BaseModel):
@@ -12,11 +12,17 @@ class ExpenseUpdateSchema(BaseModel):
 
 
 class ExpenseResponseScehema(BaseModel):
-    ID: int
+    id: int
     description: str
     amount: float
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TotalExpensesResponseScehema(BaseModel):
     expenses_count: int
     total_expenses: float
+
+
+class UserCreateSchema(BaseModel):
+    name: str
