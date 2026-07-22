@@ -1,8 +1,10 @@
 from logging.config import fileConfig
-
+import os
+from pathlib import Path
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from database import Base
+from app.database import Base
+from dotenv import load_dotenv
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -14,10 +16,25 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
+
+load_dotenv(ENV_PATH)
+
+DATA_BASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
+
+if DATA_BASE_URL:
+    config.set_main_option("sqlalchemy.url", DATA_BASE_URL)
+else:
+    raise ValueError("SQLALCHEMY_DATABASE_URL environment variable is not set")
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+from users.model import *  # noqa: E402, F403
+from expenses.model import *  # noqa: E402, F403
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
