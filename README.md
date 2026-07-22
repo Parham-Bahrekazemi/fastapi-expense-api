@@ -155,16 +155,3 @@ scripts/
 - Protected Routes
 - User Ownership Validation
 
----
-
-## Future Improvements
-
-- Alembic Database Migrations
-- Pagination
-- Search & Filtering
-- Docker Support
-- PostgreSQL
-- Unit Testing
-- Logging
-- Email Verification
-- Rate Limiting
