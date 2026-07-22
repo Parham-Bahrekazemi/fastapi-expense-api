@@ -1,182 +1,170 @@
 # FastAPI Expense API
 
-A simple RESTful Expense Tracker API built with **FastAPI** for learning and practicing REST API development.
+A production-ready REST API built with **FastAPI** for managing users and expenses.
 
-This project implements a complete CRUD API for managing users and their expenses using **SQLAlchemy ORM** with **SQLite**. It demonstrates database relationships, dependency injection, request validation, and RESTful API design.
+The project demonstrates modern backend development practices including:
+
+- JWT Authentication
+- Refresh Token Authentication
+- Role-Based Access Control (RBAC)
+- SQLAlchemy ORM
+- Dependency Injection
+- Password Hashing (bcrypt)
+- User Ownership Validation
+- Admin & Super Admin Authorization
+- SQLite Database
 
 ---
 
 ## Features
 
-- Create and manage users
-- Create a new expense for a specific user
-- Retrieve all expenses of a user
-- Retrieve a single expense
-- Update an existing expense
-- Delete an expense
-- Calculate the total amount of a user's expenses
-- SQLAlchemy ORM integration
-- SQLite database
-- One-to-Many relationship (User → Expenses)
-- Automatic database table creation
-- Pydantic request validation
-- Interactive API documentation with Swagger UI
+### Authentication
+
+- User Registration
+- User Login
+- JWT Access Token
+- JWT Refresh Token
+- Password Hashing using bcrypt
+- Protected Endpoints
+
+---
+
+### Authorization
+
+Three different roles are supported:
+
+- User
+- Admin
+- Super Admin
+
+Permission system includes:
+
+- Users can manage only their own expenses.
+- Admins can view all users.
+- Admins can delete only normal users.
+- Super Admin can promote users to admins.
+- Super Admin can revoke admin permissions.
+- Super Admin accounts cannot be deleted.
+- Admins cannot delete themselves.
+
+---
+
+### Expense Management
+
+Authenticated users can:
+
+- Create expenses
+- View their own expenses
+- Update their own expenses
+- Delete their own expenses
+
+Ownership validation prevents users from accessing other users' expenses.
 
 ---
 
 ## Tech Stack
 
-- Python 3
 - FastAPI
 - SQLAlchemy
 - SQLite
 - Pydantic
-- Uvicorn
+- JWT (PyJWT)
+- Passlib (bcrypt)
 
 ---
 
 ## Project Structure
 
-```text
-fastapi-expense-api/
-│
-├── core/
-│   ├── database.py
-│   ├── main.py
-│   ├── schemas.py
-│   └── sqlite.db
-│
-├── docs/
-│   └── database_diagram.png
-│
-├── requirements.txt
-├── README.md
-└── LICENSE
 ```
+app/
+    config.py
+    database.py
 
----
+auth/
+    dependencies.py
+    jwt.py
+    permissions.py
 
-## Database Schema
+users/
+    model.py
+    routes.py
+    schemas.py
 
-The application contains two tables:
+expenses/
+    model.py
+    routes.py
+    schemas.py
 
-### Users
+super_admin/
+    routes.py
 
-| Column | Type |
-|---------|------|
-| id | Integer |
-| name | String |
-
-### Expenses
-
-| Column | Type |
-|---------|------|
-| id | Integer |
-| user_id | Integer (Foreign Key) |
-| description | String |
-| amount | Float |
-
-Relationship:
-
-```text
-User (1)
-    │
-    └───────────────< Expense (Many)
-```
-
-The database diagram is available in:
-
-```
-docs/database_diagram.png
-```
-
----
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/<your-username>/fastapi-expense-api.git
-```
-
-Navigate to the project:
-
-```bash
-cd fastapi-expense-api
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate the virtual environment.
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Run the Development Server
-
-```bash
-fastapi dev core/main.py
-```
-
-or
-
-```bash
-uvicorn core.main:app --reload
+scripts/
+    create_super_admin.py
 ```
 
 ---
 
 ## API Endpoints
 
+### Authentication
+
+| Method | Endpoint |
+|---------|----------|
+| POST | /auth/register |
+| POST | /auth/login |
+| POST | /auth/refresh |
+
+---
+
 ### Users
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users` | Retrieve all users |
-| POST | `/users` | Create a new user |
+| Method | Endpoint |
+|---------|----------|
+| GET | /auth/users |
+| GET | /auth/users/{id} |
+| DELETE | /auth/users/{id} |
+
+---
+
+### Super Admin
+
+| Method | Endpoint |
+|---------|----------|
+| PATCH | /super-admin/users/{id}/make-admin |
+| PATCH | /super-admin/users/{id}/revoke-admin |
+
+---
 
 ### Expenses
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users/{user_id}/expenses` | Retrieve all expenses of a user |
-| GET | `/users/{user_id}/expenses/{expense_id}` | Retrieve a single expense |
-| POST | `/users/{user_id}/expenses` | Create a new expense |
-| PUT | `/users/{user_id}/expenses/{expense_id}` | Update an expense |
-| DELETE | `/users/{user_id}/expenses/{expense_id}` | Delete an expense |
-| GET | `/users/{user_id}/total_expenses` | Get total expenses and count |
+| Method | Endpoint |
+|---------|----------|
+| GET | /user/expenses |
+| POST | /user/expenses |
+| PUT | /user/expenses/{id} |
+| DELETE | /user/expenses/{id} |
 
 ---
 
-## API Documentation
+## Security
 
-After starting the server, FastAPI automatically provides interactive documentation.
-
-- **Swagger UI:** http://127.0.0.1:8000/docs
-- **ReDoc:** http://127.0.0.1:8000/redoc
+- JWT Access Tokens
+- Refresh Tokens
+- Password Hashing with bcrypt
+- Role-Based Access Control
+- Protected Routes
+- User Ownership Validation
 
 ---
 
-## Notes
+## Future Improvements
 
-- The application uses **SQLite** as its database.
-- Database tables are created automatically on application startup.
-- Expenses belong to a specific user through a **one-to-many relationship**.
-- SQLAlchemy is used as the ORM for database interactions.
-- This project is designed as a learning project for practicing FastAPI, SQLAlchemy, and REST API fundamentals.
+- Alembic Database Migrations
+- Pagination
+- Search & Filtering
+- Docker Support
+- PostgreSQL
+- Unit Testing
+- Logging
+- Email Verification
+- Rate Limiting
