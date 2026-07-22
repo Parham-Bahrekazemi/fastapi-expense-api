@@ -17,12 +17,3 @@ class ExpenseResponseScehema(BaseModel):
     amount: float
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class TotalExpensesResponseScehema(BaseModel):
-    expenses_count: int
-    total_expenses: float
-
-
-class UserCreateSchema(BaseModel):
-    name: str
